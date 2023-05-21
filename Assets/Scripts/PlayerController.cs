@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
         // Jumping
         if (isGrounded && Input.GetButtonDown("Jump"))
         {
-            rb.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+           // rb.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
         }
     }
 }
