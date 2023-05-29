@@ -4,7 +4,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 5f;
-    [SerializeField] private Transform groundCheck;
+    [SerializeField] private Transform leftFootCheck;
+    [SerializeField] private Transform rightFootCheck;
     [SerializeField] private Transform ceilingCheck;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private bool isTouchingGround;
@@ -16,13 +17,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator anim;
     [SerializeField] private BoxCollider2D upperCollider;
     [SerializeField] private BoxCollider2D lowerCollider;
+    [SerializeField] private ParallaxController pco;
+    [SerializeField] private ParallaxController pcu;
 
-    private Vector2 originalColliderSize;
     private bool isFacingRight = true; // Add this variable to keep track of the player's facing direction
     private bool inputEnabled = true;
 
+    private Vector3 startPos;
+
     private void Start()
     {
+        startPos = transform.position;
         upperCollider.enabled = true;
         lowerCollider.enabled = true;
     }
@@ -33,7 +38,10 @@ public class PlayerController : MonoBehaviour
             return;
 
         // Check if the player is grounded
-        isTouchingGround = Physics2D.Raycast(groundCheck.position, Vector2.down, groundCheckDistance, groundLayer);
+        bool leftFootGrounded = Physics2D.Raycast(leftFootCheck.position, Vector2.down, groundCheckDistance, groundLayer);
+        bool rightFootGrounded = Physics2D.Raycast(rightFootCheck.position, Vector2.down, groundCheckDistance, groundLayer);
+        isTouchingGround = leftFootGrounded || rightFootGrounded;
+
         // Check if the player is touching the ceiling
         isTouchingCeiling = Physics2D.Raycast(ceilingCheck.position, Vector2.up, ceilingCheckDistance, groundLayer);
 
@@ -65,18 +73,18 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("isJumping", !isTouchingGround);
         anim.SetBool("topHitCheck", isTouchingCeiling);
 
-        // Debug the ground raycast
-        Debug.DrawRay(groundCheck.position, Vector2.down * groundCheckDistance, Color.red);
+        if(transform.position.y < -0.5f)
+        {
+            Respawn();
+        }
+    }
 
-        // Debug the ceiling raycast
-        if(isTouchingCeiling)
-        {
-            Debug.DrawRay(ceilingCheck.position, Vector2.up * ceilingCheckDistance, Color.red);
-        }
-        else
-        {
-            Debug.DrawRay(ceilingCheck.position, Vector2.up * ceilingCheckDistance, Color.blue);
-        }
+    private void Respawn()
+    {
+        transform.position = startPos;
+        rb.velocity = Vector2.zero;
+        pco.Respawn();
+        pcu.Respawn();
     }
 
     private void FlipPlayer()

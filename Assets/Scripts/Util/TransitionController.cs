@@ -10,12 +10,18 @@ public class TransitionController : MonoBehaviour
     [SerializeField] private GameObject overworld;
     [SerializeField] private GameObject underworld;
     [SerializeField] private Rigidbody2D playerRigidbody;
+    [SerializeField] private SpriteRenderer playerSprite;
 
+    private RigidbodyConstraints2D initialConstraints;
+    private Color initialPlayerColor;
+    [SerializeField] private Color underworldColor;
     private bool isOverworldEnabled;
     private bool isTransitioning;
 
     private void Start()
     {
+        initialConstraints = playerRigidbody.constraints;
+        initialPlayerColor = playerSprite.color;
         isOverworldEnabled = true;
         isTransitioning = false;
         transitionImage.material.SetFloat("_Cutoff", 1);
@@ -35,9 +41,6 @@ public class TransitionController : MonoBehaviour
 
     private System.Collections.IEnumerator TransitionCoroutine()
     {
-        // Freeze the player
-        playerRigidbody.isKinematic = true;
-
         float targetCutoff = -0.1f - transitionImage.material.GetFloat("_Smoothing");
         float currentCutoff = transitionImage.material.GetFloat("_Cutoff");
 
@@ -48,18 +51,30 @@ public class TransitionController : MonoBehaviour
             yield return null;
         }
 
+        // Freeze the player
+        playerRigidbody.isKinematic = true;
+        playerRigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+
         if (!isOverworldEnabled)
         {
             // Disable the overworld and enable the underworld
             overworld.SetActive(false);
             underworld.SetActive(true);
+            Color color = Color.white;
+            ColorUtility.TryParseHtmlString("#BFF1BC", out color);
+            playerSprite.color = color;
         }
         else
         {
             // Enable the overworld and disable the underworld
             overworld.SetActive(true);
             underworld.SetActive(false);
+            playerSprite.color = initialPlayerColor;
         }
+
+        // Unfreeze the player
+        playerRigidbody.isKinematic = false;
+        playerRigidbody.constraints = initialConstraints;
 
         targetCutoff = 1.1f;
         currentCutoff = transitionImage.material.GetFloat("_Cutoff");
@@ -70,11 +85,7 @@ public class TransitionController : MonoBehaviour
             transitionImage.material.SetFloat("_Cutoff", currentCutoff);
             yield return null;
         }
-
         // Transition completed
         isTransitioning = false;
-
-        // Unfreeze the player
-        playerRigidbody.isKinematic = false;
     }
 }
