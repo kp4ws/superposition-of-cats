@@ -6,7 +6,7 @@ https://itch.io/jam/gamedevtv-jam-2023
 
 **Theme: Life in 2 dimensions!**  
 
-This is the second game jam that I've participated in now and it's been a really fun time. I gained more experience developing 2D platformers and applied my knowledge from my Astronomy course regarding Schrödinger's cat to create a unique and interesting game.
+This is the second game jam that I've participated in now and it's been a really fun time. I gained more experience developing 2D platformers and applied my knowledge from my Astronomy course, regarding Schrödinger's cat, to create a unique and interesting game.
 
 ## Link:
 https://kpaws-games.itch.io/superposition-of-cats
