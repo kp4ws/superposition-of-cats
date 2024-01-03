@@ -1,4 +1,4 @@
-# Superposition Of Cats
+# Superposition of Cats
 
 ## About
 This project is part of the GameDev.tv 2023 Game Jam: https://itch.io/jam/gamedevtv-jam-2023  
